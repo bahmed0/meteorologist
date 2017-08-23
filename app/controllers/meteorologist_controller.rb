@@ -15,17 +15,26 @@ class MeteorologistController < ApplicationController
     # The street address that the user typed is in the variable @street_address.
     # ==========================================================================
 
+    street_address_nospaces = @street_address.gsub(" ","+")
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address="+street_address_nospaces
+    parsed_data = JSON.parse(open(url).read)
+    @lat = parsed_data["results"][0]["geometry"]["location"]["lat"]
+    @lng = parsed_data["results"][0]["geometry"]["location"]["lng"]
+    
+    darksky_url="https://api.darksky.net/forecast/db79463d0817e86e5a4d206d90eac787/"+@lat.to_s+","+@lng.to_s
+    darksky_parsed_data = JSON.parse(open(darksky_url).read)
+  
 
 
-    @current_temperature = "Replace this string with your answer."
+    @current_temperature = darksky_parsed_data["currently"]["temperature"]
 
-    @current_summary = "Replace this string with your answer."
+    @current_summary = darksky_parsed_data["currently"]["summary"]
 
-    @summary_of_next_sixty_minutes = "Replace this string with your answer."
+    @summary_of_next_sixty_minutes = darksky_parsed_data["minutely"]["summary"]
 
-    @summary_of_next_several_hours = "Replace this string with your answer."
+    @summary_of_next_several_hours = darksky_parsed_data["hourly"]["summary"]
 
-    @summary_of_next_several_days = "Replace this string with your answer."
+    @summary_of_next_several_days = darksky_parsed_data["daily"]["summary"]
 
     render("meteorologist/street_to_weather.html.erb")
   end
