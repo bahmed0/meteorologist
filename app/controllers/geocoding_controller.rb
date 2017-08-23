@@ -18,8 +18,8 @@ class GeocodingController < ApplicationController
     street_address_nospaces=@street_address.gsub(" ","+")
     url = "https://maps.googleapis.com/maps/api/geocode/json?address="+street_address_nospaces
     parsed_data = JSON.parse(open(url).read)
-    @lat = parsed_data["results"][0]["geometry"]["location"]["lat"]
-    @lng = parsed_data["results"][0]["geometry"]["location"]["lng"]
+    @latitude = parsed_data["results"][0]["geometry"]["location"]["lat"]
+    @longitude = parsed_data["results"][0]["geometry"]["location"]["lng"]
 
     render("geocoding/street_to_coords.html.erb")
   end
